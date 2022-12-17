@@ -3,6 +3,8 @@ package unsafehelper
 import (
 	"reflect"
 	"testing"
+
+	"github.com/solsw/builtinhelper"
 )
 
 func TestInt32Uint32(t *testing.T) {
@@ -95,6 +97,48 @@ func TestInt32Byte(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := Int32Byte(&tt.args.i32, tt.args.i); got != tt.want {
 				t.Errorf("Int32Byte() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestInt32Byte_panic(t *testing.T) {
+	type args struct {
+		i32 int32
+		i   int
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{name: "-1",
+			args: args{
+				i32: 0x44332211,
+				i:   -1,
+			},
+			want: "runtime error: index out of range [-1]",
+		},
+		{name: "12",
+			args: args{
+				i32: 0x44332211,
+				i:   12,
+			},
+			want: "runtime error: index out of range [12] with length 4",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotErr := func() (err error) {
+				defer func() {
+					builtinhelper.PanicToError(recover(), &err)
+				}()
+				Int32Byte(&tt.args.i32, tt.args.i)
+				return nil
+			}()
+			got := gotErr.Error()
+			if got != tt.want {
+				t.Errorf("Runtime_panic = '%v', want '%v'", got, tt.want)
 			}
 		})
 	}
