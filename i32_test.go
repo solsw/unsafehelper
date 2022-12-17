@@ -83,11 +83,25 @@ func TestInt32Byte(t *testing.T) {
 		i   int
 	}
 	tests := []struct {
-		name string
-		args args
-		want byte
+		name              string
+		args              args
+		wantErrPanicError string
+		want              byte
 	}{
-		// {name: "-1", args: args{i32: 0x44332211, i: -1}, want: 0x11},
+		{name: "index out of range 1",
+			args: args{
+				i32: 0x44332211,
+				i:   -1,
+			},
+			wantErrPanicError: "runtime error: index out of range [-1]",
+		},
+		{name: "index out of range 2",
+			args: args{
+				i32: 0x44332211,
+				i:   12,
+			},
+			wantErrPanicError: "runtime error: index out of range [12] with length 4",
+		},
 		{name: "0", args: args{i32: 0x44332211, i: 0}, want: 0x11},
 		{name: "1", args: args{i32: 0x44332211, i: 1}, want: 0x22},
 		{name: "2", args: args{i32: 0x44332211, i: 2}, want: 0x33},
@@ -95,50 +109,26 @@ func TestInt32Byte(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Int32Byte(&tt.args.i32, tt.args.i); got != tt.want {
-				t.Errorf("Int32Byte() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestInt32Byte_panic(t *testing.T) {
-	type args struct {
-		i32 int32
-		i   int
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		{name: "-1",
-			args: args{
-				i32: 0x44332211,
-				i:   -1,
-			},
-			want: "runtime error: index out of range [-1]",
-		},
-		{name: "12",
-			args: args{
-				i32: 0x44332211,
-				i:   12,
-			},
-			want: "runtime error: index out of range [12] with length 4",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			gotErr := func() (err error) {
+			var got byte
+			gotErrPanic := func() (errPanic error) {
 				defer func() {
-					builtinhelper.PanicToError(recover(), &err)
+					builtinhelper.PanicToError(recover(), &errPanic)
 				}()
-				Int32Byte(&tt.args.i32, tt.args.i)
+				got = Int32Byte(&tt.args.i32, tt.args.i)
 				return nil
 			}()
-			got := gotErr.Error()
+			if tt.wantErrPanicError != "" {
+				gotErrPanicError := ""
+				if gotErrPanic != nil {
+					gotErrPanicError = gotErrPanic.Error()
+				}
+				if gotErrPanicError != tt.wantErrPanicError {
+					t.Errorf("Int32Byte() panic = '%v', want '%v'", gotErrPanicError, tt.wantErrPanicError)
+				}
+				return
+			}
 			if got != tt.want {
-				t.Errorf("Runtime_panic = '%v', want '%v'", got, tt.want)
+				t.Errorf("Int32Byte() = %#x, want %#x", got, tt.want)
 			}
 		})
 	}
