@@ -16,6 +16,7 @@ func Byte4Int32(b4 *[4]byte) *int32 {
 }
 
 // Int32Byte returns 'i'-th byte from int32.
+//
 // Int32Byte panics if 'i' is out of [0..3] range.
 func Int32Byte(i32 *int32, i int) byte {
 	return (*Int32Byte4(i32))[i]
@@ -37,6 +38,7 @@ func Byte4Uint32(b4 *[4]byte) *uint32 {
 }
 
 // Uint32Byte returns 'i'-th byte from uint32.
+//
 // Uint32Byte panics if 'i' is out of [0..3] range.
 func Uint32Byte(u32 *uint32, i int) byte {
 	return (*Uint32Byte4(u32))[i]

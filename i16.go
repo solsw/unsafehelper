@@ -16,6 +16,7 @@ func Byte2Int16(b2 *[2]byte) *int16 {
 }
 
 // Int16Byte returns 'i'-th byte from int16.
+//
 // Int16Byte panics if 'i' is out of [0..1] range.
 func Int16Byte(i16 *int16, i int) byte {
 	return (*Int16Byte2(i16))[i]
@@ -37,6 +38,7 @@ func Byte2Uint16(b2 *[2]byte) *uint16 {
 }
 
 // Uint16Byte returns 'i'-th byte from uint16.
+//
 // Uint16Byte panics if 'i' is out of [0..1] range.
 func Uint16Byte(u16 *uint16, i int) byte {
 	return (*Uint16Byte2(u16))[i]

@@ -16,6 +16,7 @@ func Byte8Int64(b8 *[8]byte) *int64 {
 }
 
 // Int64Byte returns 'i'-th byte from int64.
+//
 // Int64Byte panics if 'i' is out of [0..7] range.
 func Int64Byte(i64 *int64, i int) byte {
 	return (*Int64Byte8(i64))[i]
@@ -37,6 +38,7 @@ func Byte8Uint64(b8 *[8]byte) *uint64 {
 }
 
 // Uint64Byte returns 'i'-th byte from uint64.
+//
 // Uint64Byte panics if 'i' is out of [0..7] range.
 func Uint64Byte(u64 *uint64, i int) byte {
 	return (*Uint64Byte8(u64))[i]
