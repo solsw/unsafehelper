@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/solsw/builtinhelper"
+	"github.com/solsw/errorhelper"
 )
 
 func TestInt32Uint32(t *testing.T) {
@@ -112,7 +112,7 @@ func TestInt32Byte(t *testing.T) {
 			var got byte
 			gotErrPanic := func() (errPanic error) {
 				defer func() {
-					builtinhelper.PanicToError(recover(), &errPanic)
+					errorhelper.PanicToError(recover(), &errPanic)
 				}()
 				got = Int32Byte(&tt.args.i32, tt.args.i)
 				return nil
